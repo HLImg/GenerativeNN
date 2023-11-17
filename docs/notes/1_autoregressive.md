@@ -1,0 +1,5 @@
+In such a worldview, we can think of any kind of **observed data**, say $\mathcal D$, as a finite samples from an **underlying distribution**, say $p_{data}$. The goal of any generative models is then to approximate this data distribution given access to the dataset $\mathcal D$. The hope is that we are abel to **learn** a good generative model, we can use the learned model for downstream **inference**.
+
+**Learning**: We will be primarily interested in parametric approximations to the data distribution, which summarize all the information about the dataset $\mathcal D$ in a finte set of parameters. In contrast with non-parametric models, **parametric models scale more efficiently with large datasets but are limited in the family of distributions they can represent**.
+
+![](https://deepgenerativemodels.github.io/notes/introduction/learning_1.png)
