@@ -2,7 +2,11 @@
 
 [![](https://qiniu.lianghao.work/CodeBase-v0.1-blue)](https://github.com/HLImg/PictoRestore)
 
-
+## [Deep Generative Models (CS236 Fall 2023)](https://deepgenerativemodels.github.io/)
+- [ ] [Autoregressive models](./docs/notes/1_autoregressive.md)
+- [ ] [Variational Autoencoders](./docs/notes/2_vae.md)
+- [ ] [Normalizing](./docs/notes/3_normlizing.md)
+- [ ] [Generative Adversarial Networks](./docs/notes/4_gan.md)
 
 ### single-machine-multi-gpus
 
