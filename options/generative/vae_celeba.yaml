@@ -1,0 +1,85 @@
+global:
+  seed : 10
+  task : "denoise"
+  action : 'train'
+  dir_record :
+    main_dir : ./exp
+    main_name : VAE
+    sub_dir:
+      runlog: runlog
+      save_ckpt: save_ckpt
+      resume_ckpt: resume_ckpt
+      save_state: save_state
+      best_ckpt : best_ckpt
+
+
+
+dataset:
+  task : 'generative'
+  name : 'vae_celeba'
+  param:
+    train :
+      root : /data/dataset/generative/CelebA/Img/img_align_celeba
+      img_shape : [64, 64]
+
+
+loss:
+  pixel :
+    name : 'vae'
+    param :
+      loss_weight : 1.
+      reduction : mean
+      kl_weight : 0.00025
+
+
+net:
+  task : 'generative'
+  net_g :
+    name : 'unetvae'
+    param:
+      in_dim : 3
+      latent_dim: 128
+      hiddens : [16, 32, 64, 128, 256]
+      img_length : 64
+
+model :
+  task : 'generative'
+  name : 'vae'
+
+train:
+  num_node : 1
+  num_worker : 4
+  batch_per_gpu : 64
+  num_gpu_per_node : 1
+  save_freq : 202599
+  print_freq : !!float 2e4
+  total_iters : !!float 3e7
+  init:
+    state : False
+    name : ~
+  resume:
+    state: False
+    mode: all
+    ckpt: ~
+  optim:
+    optimizer:
+      name : 'Adam'
+      param :
+        lr : 0.005
+    scheduler:
+      name : 'MultiStepLR'
+      param :
+        milestones: [20000000]
+        gamma: 1
+
+
+val:
+  show_iter: !!float 8e8
+  val_freq : !!float 8e8
+  metric:
+    name: image
+    param:
+      psnr:
+        crop_border: 0
+        input_order: 'HWC'
+        test_y_channel: False

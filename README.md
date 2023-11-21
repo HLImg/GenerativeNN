@@ -66,7 +66,7 @@ use_cpu: false
 ```
 启动训练命令如下
 ```shell
-accelerate launch --config_file=resource/acc_config/single_node.yaml --machine_rank=0 --num_machines=1 main.py  --yaml options/nafnet/train_nafnet_wf_32.yaml
+accelerate launch --config_file=resource/acc_config/single_node.yaml --machine_rank=0 --num_machines=1 main.py  --yaml options/nafnet/train_nafnet_wf_32.yaml --train
 ```
 ### multi-machines-multi-gpus
 相同的配置文件，以2台机器为例（显卡数默认为8）

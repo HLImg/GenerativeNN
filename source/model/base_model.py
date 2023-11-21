@@ -30,16 +30,22 @@ class BaseModel:
 
         self.val_freq = self.conf_val['val_freq']
         self.save_freq = self.conf_train['save_freq']
+        self.show_iter = self.conf_val['show_iter']
         self.print_freq = self.conf_train['print_freq']
         self.total_iter = self.conf_train['total_iters']
         
         self.loss = 0
         self.cur_iter = 0
+        
 
         # 初始化dataset, network, criterion, optimiser, scheduler
         criterion = Loss(config)()
         dataset = DataSet(config)()
-        self.val_sum = dataset['test'].__len__()
+        # TODO
+        if not dataset.get('test', False):
+            self.val_sum = 0
+        else:
+            self.val_sum = dataset['test'].__len__()
         train_loader = DataLoader(dataset['train'],
                                   batch_size=self.bacth_per_gpu,
                                   shuffle=True,

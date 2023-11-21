@@ -5,10 +5,14 @@
 # @Email   :   lianghao@whu.edu.cn
 
 from .denoise import *
+from .generative import *
 
 nets = {
     "denoise": {
-        "nafnet": Nafnet,
+        "nafnet": NAFNet,
+    },
+    'generative':{
+        'unetvae': UnetVAE
     }
 }
 

@@ -7,17 +7,18 @@
 from .pixel_loss import *
 from .image_loss import *
 
-pixel_loss = {
-    "l1": L1Loss,
-    "mse": MSELoss,
-    "psnr": PSNRLoss
-}
+# pixel_loss = {
+#     "l1": L1Loss,
+#     "mse": MSELoss,
+#     "psnr": PSNRLoss
+# }
 
 losses = {
     "pixel" : {
         "l1": L1Loss,
         "mse": MSELoss,
-        "psnr": PSNRLoss
+        "psnr": PSNRLoss,
+        'vae': VAELoss
     },
     'image': {
         'sam': SAMLoss

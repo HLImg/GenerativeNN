@@ -40,7 +40,7 @@ def train(model, recoder, logger, main_flag):
                     writer.add_scalar('data/train', model.loss, cur_iter)
                 logger.info(f"epoch : {epoch}, cur_lr : {model.optimizer.param_groups[0]['lr'] : .8f}, loss = {model.loss}")
 
-            if cur_iter % model.val_freq == 0 or cur_iter == 1000:
+            if cur_iter % model.val_freq == 0 or cur_iter == model.show_iter:
                 # 不进行分布式验证，在一个gpu上完成验证
                 model.net_g.eval()
                 res_metric = {}

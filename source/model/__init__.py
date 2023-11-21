@@ -6,11 +6,15 @@
 
 
 from .denoise import *
+from .generative import *
 from .common.standard import standardModel
 
 models = {
     "denoise": {
         "standard": standardModel,
+    },
+    'generative':{
+        'vae': VAEModel
     }
 }
 
