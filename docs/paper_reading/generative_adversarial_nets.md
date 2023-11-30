@@ -1,6 +1,7 @@
 ## Generative Adversarial Nets
 
-[paper](https://arxiv.org/abs/1406.2661)
+[paper](https://arxiv.org/abs/1406.2661) | 
+[Reference](https://zhuanlan.zhihu.com/p/24767059)
 
 The GAN simultaneously train two models:
 
@@ -87,3 +88,4 @@ $$
 ![image-20231130165911124](https://qiniu.lianghao.work/image-20231130165911124.png)
 
 ![image-20231130165953800](https://qiniu.lianghao.work/image-20231130165953800.png)
+
