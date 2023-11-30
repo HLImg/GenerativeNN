@@ -1,8 +1,5 @@
 ## Generative Adversarial Nets
-
-[paper](https://arxiv.org/abs/1406.2661) | 
-[Reference](https://zhuanlan.zhihu.com/p/24767059)
-
+### [Paper](https://arxiv.org/abs/1406.2661)
 The GAN simultaneously train two models:
 
 - **Generative ($G$) Model** captures the **data distribution**
@@ -88,4 +85,13 @@ $$
 ![image-20231130165911124](https://qiniu.lianghao.work/image-20231130165911124.png)
 
 ![image-20231130165953800](https://qiniu.lianghao.work/image-20231130165953800.png)
+
+### [Reference](https://zhuanlan.zhihu.com/p/24767059)
+
+| 文件/命令   |
+| ----------- |
+| [DataSet](../../source/dataset/generative/vae_celeba.py) |
+|             |
+|             |
+|             |
 

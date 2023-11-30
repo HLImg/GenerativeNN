@@ -21,9 +21,10 @@ class CelebaDataSet(Dataset):
         self.filenames = sorted(os.listdir(root))
         
         self.pipeline = transforms.Compose([
-            transforms.CenterCrop(168),
+            # transforms.CenterCrop(168),
             transforms.Resize(self.img_shape),
-            transforms.ToTensor()
+            transforms.ToTensor(),
+            # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
     
     def __len__(self):
