@@ -8,6 +8,36 @@
 import torch
 import torch.nn as nn
 
+class DCGAN(nn.Module):
+    def __init__(self) -> None:
+        super(DCGAN, self).__init__()
+
+        self.net_g = Generator()
+        self.net_d = Discriminator()
+    
+    def forward(self, inp):
+        """ the format for inputs on GAN Models
+        Args:
+            inp (dict): {
+                "x" : data,
+                "net_g": True or False
+            }
+        """
+        g_train = inp['net_g']
+
+        if g_train:
+            for p in self.net_d.parameters():
+                p.requires_grad = False
+            return self.net_g(inp['x'])
+        else:
+            for p in self.net_d.parameters():
+                p.requires_grad = True
+            return self.net_d(inp['x'])
+        
+
+            
+
+
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()

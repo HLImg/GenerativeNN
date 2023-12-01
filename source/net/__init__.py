@@ -12,7 +12,8 @@ nets = {
         "nafnet": NAFNet,
     },
     'generative':{
-        'unetvae': UnetVAE
+        'unetvae': UnetVAE,
+        'dcgan': DCGAN
     }
 }
 
