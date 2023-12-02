@@ -1,3 +1,5 @@
+[TOC]
+
 # Denoising Diffusion Probabilistic Models
 
 ![image-20231201155842769](https://qiniu.lianghao.work/image-20231201155842769.png)
@@ -168,7 +170,7 @@ where $\sqrt{(1-\alpha_1)\alpha_2}\cdot \epsilon \sim \mathcal N(0, \mathbf I(1-
 >
 > 3. **Why should there be a square root applied to the coefficient of the mean? $\sqrt{\mathbf x_0\alpha_t}$**
 >
->    Where we require $\mu(\mathbf x_t)\to 0$ to occur, it must also be the case that $\sigma(\mathbf x_t) \to \mathbf I$. Employing a single coefficient to manage concurrent changes in both the mean and variance can enhance the robustness of the diffusion process. However, $\mu(\mathbf x_t)$ and $\sigma(\mathbf x_t)$ are not dimensionally equivalent, and variance is of a squared nature. As the original paper defines $\alpha_t$ directly for the variance, to maintain balance, we need to apply a square root operation to the mean
+>    Where we require $\mu(\mathbf x_t)\to 0$ to occur, it must also be the case that $\sigma(\mathbf x_t) \to \mathbf I$. Employing a single coefficient to manage concurrent changes in both the mean and variance can enhance the robustness of the diffusion process. However, $\mu(\mathbf x_t)$ and $\sigma(\mathbf x_t)$ are not dimensionally equivalent, and variance is of a squared nature. As the original paper defines $\alpha_t$ directly for the variance, to maintain balance, we need to apply a square root operation to the mean.
 
 ![image-20231202180059377](https://qiniu.lianghao.work/image-20231202180059377.png)
 
