@@ -205,13 +205,7 @@ $$
 
 **Although we cannot obtain the inverse distribution $q(\mathbf x_{t-1}|\mathbf x_t)$, but if we know $\mathbf x_0$, we can obtain the $q(\mathbf x_{t-1}|\mathbf x_t,\mathbf x_0)$ by the Bayesian formula**.
 
-$$
-\begin{aligned}
-q(\mathbf x_{t-1}|\mathbf x_t, \mathbf x_0) &=q(\mathbf x_{t}|\mathbf x_{t-1}, \mathbf x_0)\frac{q(\mathbf x_{t-1}, \mathbf x_0)}{q(\mathbf x_t, \mathbf x_0)}\\
-&= q(\mathbf x_t|\mathbf x_{t-1})\frac{q(\mathbf x_{t-1},\mathbf x_0)}{q(\mathbf x_t, \mathbf x_0)}\\
-&\propto\exp\left(-\frac{1}{2}\left((\underbrace{\frac{\alpha_t}{1-\alpha_t} + \frac{1}{1-\bar\alpha_{t-1}}}_{ \text{the variance of } \mathbf x_{t-1}})\mathbf x_{t-1}^2 -(\underbrace{\frac{2\sqrt \alpha_t}{1-\alpha_{t}}\mathbf x_t +\frac{2\sqrt{\bar\alpha_{t-1}}}{1-\bar\alpha_{t-1}}\mathbf x_0}_{\text{the mean of }\mathbf x_{t-1}})\mathbf x_{t-1} +C\right)\right)
-\end{aligned}
-$$
+![image-20231202224025504](https://qiniu.lianghao.work/image-20231202224025504.png)
 
 where $\mathbf{C}$ denotes the negligible terms that only include $\mathbf{x}_0$ and $\mathbf{x}_{t}$. The expression of Gaussian distribution is $\mathcal N(\mathbf x;\mu, \sigma^2) \propto \exp\left(-\frac{1}{2}(\frac{1}{\sigma^2}\mathbf x^2-\frac{2\mu}{\sigma^2}\mathbf x + \frac{\mu^2}{\sigma^2})\right)$.
 
