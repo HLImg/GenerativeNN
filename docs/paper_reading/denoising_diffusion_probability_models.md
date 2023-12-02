@@ -244,6 +244,12 @@ $$
 >
 > *There are the two extreme choices corresponding to upper and lower bounds on reverse process entropy for data with coordinatewise unit variance*.
 
+
+
+#### 3. Loss function
+
+
+
 ### Reference
 
 [1] [Understanding the diffusion model from the simple to the deep by user-ewrfcas](https://zhuanlan.zhihu.com/p/525106459)
