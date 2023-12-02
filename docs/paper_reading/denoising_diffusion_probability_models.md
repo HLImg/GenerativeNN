@@ -186,22 +186,22 @@ In the reverse diffusion process, the fundamental principle is that we have to e
 
 1. The Markov chain for the reverse diffusion starts from where the forward process ends, i.e., at timestep $T$, where the data distribution has been converted into (nearly an) isotropic Gaussian distribution.
 
-   $$
-   \begin{aligned}
-   q(\mathbf x_T) &\approx \mathcal N(\mathbf x_t;0, \mathbf I) \\
-   p(\mathbf x_T) &:= \mathcal N(\mathbf x_t;0, \mathbf I) \\
-   \end{aligned}
-   $$
+$$
+\begin{aligned}
+q(\mathbf x_T) &\approx \mathcal N(\mathbf x_t;0, \mathbf ) \\
+p(\mathbf x_T) &:= \mathcal N(\mathbf x_t;0, \mathbf I) \\
+\end{aligned}
+$$
 
 2. The PDF of the reverse diffusion process is an **"integral"** over all the possible pathways we can take to arrive at a data sample (in the same distribution as the original) starting from pure noise $\mathbf x_T$.
 
-   $$
-   \begin{aligned}
-   p_\theta(\mathbf x_0) &:= \int p_\theta(\mathbf x_{0:T})d\mathbf x_{1:T}\\
-   p_\theta(\mathbf x_{0:T}) &:= p(\mathbf x_T)\prod_{t=1}^T p_\theta(\mathbf x_{t-1}|\mathbf x_t)\\
-   p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t))
-   \end{aligned}
-   $$
+$$
+\begin{aligned}
+p_\theta(\mathbf x_0) &:= \int p_\theta(\mathbf _{0:T})d\mathbf x_{1:T}\\
+p_\theta(\mathbf x_{0:T}) &:= p(\mathbf x_T)\prod_{t=1}^T p_\theta(\mathbf x_{t-1}|\mathbf x_t)\\
+p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), Sigma_\theta(\mathbf x_t, t))
+\end{aligned}
+$$
 
 **Although we cannot obtain the inverse distribution $q(\mathbf x_{t-1}|\mathbf x_t)$, but if we know $\mathbf x_0$, we can obtain the $q(\mathbf x_{t-1}|\mathbf x_t,\mathbf x_0)$ by the Bayesian formula**.
 
