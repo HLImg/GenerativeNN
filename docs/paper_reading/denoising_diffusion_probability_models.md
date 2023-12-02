@@ -1,14 +1,3 @@
-
-
-- [Denoising Diffusion Probabilistic Models](#denoising-diffusion-probabilistic-models)
-    - [Preliminaries](#preliminaries)
-    - [Diffusion models and denoising autoencoders](#diffusion-models-and-denoising-autoencoders)
-      - [1. Forward process and $L_T$](#1-forward-process-and-l_t)
-        - [Reparameterization trick](#reparameterization-trick)
-        - [Random timestep, $\mathbf x_t$ can be represented by $\mathbf x_0$ and $\beta_t$](#random-timestep-mathbf-x_t-can-be-represented-by-mathbf-x_0-and-beta_t)
-    - [Reference](#reference)
-
-
 # Denoising Diffusion Probabilistic Models
 
 ![image-20231201155842769](https://qiniu.lianghao.work/image-20231201155842769.png)
