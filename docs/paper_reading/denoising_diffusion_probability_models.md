@@ -197,9 +197,9 @@ $$
 
 $$
 \begin{aligned}
-p_\theta(\mathbf x_0) &:= \int p_\theta(\mathbf _{0:T})d\mathbf x_{1:T}\\
+p_\theta(\mathbf x_0) &:= \int p_\theta(\mathbf x_{0:T})d\mathbf x_{1:T}\\
 p_\theta(\mathbf x_{0:T}) &:= p(\mathbf x_T)\prod_{t=1}^T p_\theta(\mathbf x_{t-1}|\mathbf x_t)\\
-p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), Sigma_\theta(\mathbf x_t, t))
+p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t))
 \end{aligned}
 $$
 
