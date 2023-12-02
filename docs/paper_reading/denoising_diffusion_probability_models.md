@@ -152,19 +152,25 @@ $$
 \end{aligned}
 $$
 
-where $\sqrt{(1-\alpha_1)\alpha_2}\cdot \epsilon \sim \mathcal N(0, \mathbf I(1-\alpha_1)\alpha_2)$, $\sqrt{1-\alpha_2}\cdot \epsilon \sim \mathcal N(0, (1-\alpha_2)\mathbf I)$ , the addition between the two follows Gaussian dirstribution $\mathcal N(0, (1-\alpha_1\alpha_2)\mathbf I)$.
+where $\sqrt{(1-\alpha_1)\alpha_2}\cdot \epsilon \sim \mathcal N(0, \mathbf I(1-\alpha_1)\alpha_2)$, $\sqrt{1-\alpha_2}\cdot \epsilon \sim \mathcal N(0, (1-\alpha_2)\mathbf I)$ , the addition between the two follows Gaussian dirstribution $\mathcal N(0, (1-\alpha_1\alpha_2)\mathbf I)$. 
 
-> 1. The efficiency of hyper-parameter $\beta_t$?
+**Using the above formulation, we can sample at any arbitrary timestep $t$ in Markoc chain**.
+
+> 1. **The efficiency of hyper-parameter $\beta_t$?**
 >
 >    The forward diffusion process hopes that $\mathbf x_T$ will gradually approach the **standard norm distribution** $\mathcal N(0,  \mathbf I)$ when $T\rightarrow  +\infty$. And $\mathbf x_t$ is only related to its previous step $\mathbf x_{t-1}$. $\mathbf x_t$ and $\mathbf x_{t-1}$ are **linear Gaussian changes**. The relationship between $\mu(\mathbf x_t)$ and $\mathbf x_{t-1}$ must be a linear relationship multiplied by a certain coefficient $\mathbf x_{t-1}$.
 >
-> 2. Why $\alpha_t=1-\beta_t$ is less than $1$ ?
+>    **In practice, the authors of DDPMs use a "linear variance scheduler" and define $\beta$ in the range $[0.0001, 0.02]$ and set the timesteps $T=1000$**. *Diffusion models scale down the data with each forward process step (by a $\sqrt{1-\beta_t}$ factor) so that variance does not grow when adding noise*.
+>
+> 2. **Why $\alpha_t=1-\beta_t$ is less than $1$ ?**
 >
 >    If $\alpha_i < 1$, then $\bar\alpha_t = \prod_{s=1}^t \alpha_s$ will converge to $0$  as $t$ increases, which then leads to $\mu(\mathbf x_t)\rightarrow 0$.
 >
-> 3. Why should there be a square root applied to the coefficient of the mean? $\sqrt{\mathbf x_0\alpha_t}$
+> 3. **Why should there be a square root applied to the coefficient of the mean? $\sqrt{\mathbf x_0\alpha_t}$**
 >
 >    Where we require $\mu(\mathbf x_t)\to 0$ to occur, it must also be the case that $\sigma(\mathbf x_t) \to \mathbf I$. Employing a single coefficient to manage concurrent changes in both the mean and variance can enhance the robustness of the diffusion process. However, $\mu(\mathbf x_t)$ and $\sigma(\mathbf x_t)$ are not dimensionally equivalent, and variance is of a squared nature. As the original paper defines $\alpha_t$ directly for the variance, to maintain balance, we need to apply a square root operation to the mean
+
+![image-20231202180059377](https://qiniu.lianghao.work/image-20231202180059377.png)
 
 ### Reference
 
