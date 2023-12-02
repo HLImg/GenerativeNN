@@ -154,6 +154,12 @@ $$
 
 where $\sqrt{(1-\alpha_1)\alpha_2}\cdot \epsilon \sim \mathcal N(0, \mathbf I(1-\alpha_1)\alpha_2)$, $\sqrt{1-\alpha_2}\cdot \epsilon \sim \mathcal N(0, (1-\alpha_2)\mathbf I)$ , the addition between the two follows Gaussian dirstribution $\mathcal N(0, (1-\alpha_1\alpha_2)\mathbf I)$. 
 
+$$
+\begin{aligned}
+q(\mathbf x_t|\mathbf x_0) = \mathcal N(\mathbf x_t;\sqrt{\bar\alpha_t}\cdot \mathbf x_0, (1-\bar \alpha_t)\mathbf I)
+\end{aligned}
+$$
+
 **Using the above formulation, we can sample at any arbitrary timestep $t$ in Markoc chain**.
 
 > 1. **The efficiency of hyper-parameter $\beta_t$?**
@@ -171,6 +177,77 @@ where $\sqrt{(1-\alpha_1)\alpha_2}\cdot \epsilon \sim \mathcal N(0, \mathbf I(1-
 >    Where we require $\mu(\mathbf x_t)\to 0$ to occur, it must also be the case that $\sigma(\mathbf x_t) \to \mathbf I$. Employing a single coefficient to manage concurrent changes in both the mean and variance can enhance the robustness of the diffusion process. However, $\mu(\mathbf x_t)$ and $\sigma(\mathbf x_t)$ are not dimensionally equivalent, and variance is of a squared nature. As the original paper defines $\alpha_t$ directly for the variance, to maintain balance, we need to apply a square root operation to the mean.
 
 ![image-20231202180059377](https://qiniu.lianghao.work/image-20231202180059377.png)
+
+#### 2. Reverse process and $L_{1:T-1}$
+
+In the reverse diffusion process, the fundamental principle is that we have to eliminate the noise added in the forward process iteratively. This is accomplished by using a neural network model. In other words,  if we obtain the distribution $q(\mathbf x_{t-1}|\mathbf x_t)$,  we can progressively restore $\mathbf x_0$ from a standard normal distribution, denoted as $\mathbf x_T\sim \mathcal N(0, \mathbf I)$. *William showed that, for Gaussian (and binomial) distributions, the diffusion process's reversal has the same functional form as the forward process*. Therefore, in DDPM, the distribution of the reverse process, $q(\mathbf x_{t-1}|\mathbf x_t)$, is also a Gaussian distribution.  However, we cannot explicitly determine the analytic expression of $q(\mathbf x_{t-1}|\mathbf x_t)$.  Instead, it is common to employ a deep neural model, specifically a U-Net architecture paired with attention mechanisms, to infer the reverse distribution $p_\theta$.
+
+<img src="https://learnopencv.com/wp-content/uploads/2023/02/denoising-diffusion-probabilistic-models-forward_and_backward_equations.png" style="zoom:67%;" />
+
+1. The Markov chain for the reverse diffusion starts from where the forward process ends, i.e., at timestep $T$, where the data distribution has been converted into (nearly an) isotropic Gaussian distribution.
+
+   $$
+   \begin{aligned}
+   q(\mathbf x_T) &\approx \mathcal N(\mathbf x_t;0, \mathbf I) \\
+   p(\mathbf x_T) &:= \mathcal N(\mathbf x_t;0, \mathbf I) \\
+   \end{aligned}
+   $$
+
+2. The PDF of the reverse diffusion process is an **"integral"** over all the possible pathways we can take to arrive at a data sample (in the same distribution as the original) starting from pure noise $\mathbf x_T$.
+
+   $$
+   \begin{aligned}
+   p_\theta(\mathbf x_0) &:= \int p_\theta(\mathbf x_{0:T})d\mathbf x_{1:T}\\
+   p_\theta(\mathbf x_{0:T}) &:= p(\mathbf x_T)\prod_{t=1}^T p_\theta(\mathbf x_{t-1}|\mathbf x_t)\\
+   p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t))
+   \end{aligned}
+   $$
+
+**Although we cannot obtain the inverse distribution $q(\mathbf x_{t-1}|\mathbf x_t)$, but if we know $\mathbf x_0$, we can obtain the $q(\mathbf x_{t-1}|\mathbf x_t,\mathbf x_0)$ by the Bayesian formula**.
+
+$$
+\begin{aligned}
+q(\mathbf x_{t-1}|\mathbf x_t, \mathbf x_0) &=q(\mathbf x_{t}|\mathbf x_{t-1}, \mathbf x_0)\frac{q(\mathbf x_{t-1}, \mathbf x_0)}{q(\mathbf x_t, \mathbf x_0)}\\
+&= q(\mathbf x_t|\mathbf x_{t-1})\frac{q(\mathbf x_{t-1},\mathbf x_0)}{q(\mathbf x_t, \mathbf x_0)}\\
+&\propto\exp\left(-\frac{1}{2}\left((\underbrace{\frac{\alpha_t}{1-\alpha_t} + \frac{1}{1-\bar\alpha_{t-1}}}_{ \text{the variance of } \mathbf x_{t-1}})\mathbf x_{t-1}^2 -(\underbrace{\frac{2\sqrt \alpha_t}{1-\alpha_{t}}\mathbf x_t +\frac{2\sqrt{\bar\alpha_{t-1}}}{1-\bar\alpha_{t-1}}\mathbf x_0}_{\text{the mean of }\mathbf x_{t-1}})\mathbf x_{t-1} +C\right)\right)
+\end{aligned}
+$$
+
+where $\mathbf{C}$ denotes the negligible terms that only include $\mathbf{x}_0$ and $\mathbf{x}_{t}$. The expression of Gaussian distribution is $\mathcal N(\mathbf x;\mu, \sigma^2) \propto \exp\left(-\frac{1}{2}(\frac{1}{\sigma^2}\mathbf x^2-\frac{2\mu}{\sigma^2}\mathbf x + \frac{\mu^2}{\sigma^2})\right)$.
+
+$$
+\left\{ \begin{array}{l}
+\frac{\alpha_t}{1-\alpha_t} + \frac{1}{1-\bar\alpha_{t-1}} = \frac{1}{\sigma^2}\\
+\frac{2\sqrt\alpha_t}{1-\alpha_{t}}\mathbf x_t + \frac{2\sqrt{\bar\alpha_{t-1}}}{1-\bar\alpha_{t-1}}\mathbf x_0 = \frac{2\mu}{\sigma^2}
+\end{array} \right.
+$$
+
+Now, we can obtain the parameter form of distribution $q(\mathbf x_{t-1}|\mathbf x_t, \mathbf x_0)$ as follows.
+
+$$
+\begin{aligned}
+\tilde\mu_t(\mathbf x_t, \mathbf x_0) &=\mu=\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\mathbf x_t + \frac{\sqrt{\bar\alpha_{t-1}}(1-\alpha_t)}{1-\bar\alpha_t}\mathbf x_0\\
+\tilde \beta_t &= \sigma^2=\frac{(1-\alpha_t)(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}
+\end{aligned}
+$$
+
+We combine Eq(12) and Eq(18), and we can obtain more specific form.
+$$
+\tilde\mu_\theta(\mathbf x_t, t)=\tilde\mu_t(\mathbf x_t, \mathbf x_0) = \frac{1}{\sqrt{\alpha_t}}(\mathbf x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\bar\epsilon_t)
+$$
+
+**where $\bar{\epsilon}_t$ is the Gaussian-distributed noise predicted by the deep neural network**, expressed as $\epsilon_\theta(\mathbf{x}_t, t)$. **The reverse (or inference) process of the DDPM is outlined below**.
+
+1. First, Gaussian noise $\epsilon_\theta(\mathbf x_t, t)$ is predicted at each timestep using  $\mathbf x_t$ and $t$ , from which we then determine the mean $\mu_\theta(\mathbf x_t, t)$.
+2. Subsequently, the variance $\Sigma_\theta(\mathbf x_t, t)$ is calculated. 
+3. Finally,  $\mathbf x_{t-1}$ is resampled from the posterior distribution  $q(\mathbf x_{t-1}|\mathbf x_t)$
+
+> Authors discuss their choices in $p_\theta(\mathbf x_{t-1}|\mathbf x_t) = \mathcal N(\mathbf x_{t-1};\mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t)$ when $1< t\le T$.  First, they set $\Sigma_\theta(\mathbf x_t, t)=\sigma^2_t\mathbf I$ to **untrained time-dependent constants**.  Experimentally, both $\sigma^2_t =\beta_t$ and $\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t$ has **similar results**:
+>
+> - $\sigma^2_t =\beta_t$ is optimal for $\mathbf x_0 \sim \mathcal N(\mathbf 0, \mathbf I)$
+> -  $\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t$ is optimal for $\mathbf x_0$ deterministically set to one point.
+>
+> *There are the two extreme choices corresponding to upper and lower bounds on reverse process entropy for data with coordinatewise unit variance*.
 
 ### Reference
 
