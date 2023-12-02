@@ -232,6 +232,7 @@ $$
 $$
 
 We combine Eq(12) and Eq(18), and we can obtain more specific form.
+
 $$
 \tilde\mu_\theta(\mathbf x_t, t)=\tilde\mu_t(\mathbf x_t, \mathbf x_0) = \frac{1}{\sqrt{\alpha_t}}(\mathbf x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\bar\epsilon_t)
 $$
