@@ -307,10 +307,6 @@ The simplified objective of $L_{\text{simple}}(\theta)$  discards the weighting 
 
 **Deep Neural Network**: The DDPM uses a **U-Net backbone** similar to an **unmasked PixelCNN++** with **group normalization throughout** the **reverse process**. **Parameters are shared across time**, which is specified to the network using the **Transformer sinusoidal position embedding**. And DDPM uses **self.-attention** at the $16\times 16$ feature map resolution.  
 
-
-
-
-
 ![image-20231203140351842](https://qiniu.lianghao.work/image-20231203140351842.png)
 
 
