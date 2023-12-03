@@ -279,9 +279,11 @@ $$
 
 3. $L_0=\mathbb E_q[-\log p_\theta(\mathbf x_0|\mathbf x_1)]$:  The authors of DDPM assume that the image consists of integers in $\{0, 1, \cdots,255\}$ scales linearly to $[-1, 1]$. **This ensures that the neural network reverse process operates on consistently scaled inputs starting from the standard normal prior $p(\mathbf x_T)$**. To obtain **discrete log-likelihoods**, they set this term to an **independent discrete decoder** derived from the Gaussian $\mathbf N(\mathbf x_0;\mu_\theta(\mathbf x_1, 1), \sigma^2_1\mathbf I)$. 
 
-![image-20231203144517526](https://qiniu.lianghao.work/image-20231203144517526.png)
+   
 
-where $D$ is the data dimensionality and the $i$​ superscript indicates extraction of one coordinate. *Similar to the discretized continuous distributions used in VAE decoders and autoregressive models, DDPM's choice here ensures that the variational bound is a lossless codelength of discrete data, without need of adding noise to the data or incorporating the Jacobian of the scaling operation into the log likelihood*. 
+   ![image-20231203144517526](https://qiniu.lianghao.work/image-20231203144517526.png)
+   
+   where $D$ is the data dimensionality and the $i$​ superscript indicates extraction of one coordinate. *Similar to the discretized continuous distributions used in VAE decoders and autoregressive models, DDPM's choice here ensures that the variational bound is a lossless codelength of discrete data, without need of adding noise to the data or incorporating the Jacobian of the scaling operation into the log likelihood*. 
 
 In ddpm, authors found it beneficial to sample quality (and simpler to implement) to train the following variant of the variational bound.
 
