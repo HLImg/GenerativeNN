@@ -94,8 +94,6 @@ $$
 
 Diffusion models might appear to be a restricted class of latent variable models, but they allow a large number of degrees of freedom in implementation. **One must choose the variances $\beta_t$ of the forward process and the model architecture and Gaussian distribution parameterization of the reverse process**.
 
-![image-20231202124353163](https://qiniu.lianghao.work/image-20231202124353163.png)
-
 #### 1. Forward process and $L_T$
 
 > The authors ignore the fact that the forward process variances $\beta_t$ are learnable by reparameterization and instead fix them as constants.  Thus,  in the implementation of DDPM, the approximate posterior $q$ has no learnable parameters, so $L_T$ is a constant in during training and can be ignored.
@@ -199,9 +197,17 @@ $$
 \begin{aligned}
 p_\theta(\mathbf x_0) &:= \int p_\theta(\mathbf x_{0:T})d\mathbf x_{1:T}\\
 p_\theta(\mathbf x_{0:T}) &:= p(\mathbf x_T)\prod_{t=1}^T p_\theta(\mathbf x_{t-1}|\mathbf x_t)\\
-p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t))
+p_\theta(\mathbf x_{t - 1}|\mathbf x_t) &:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t))\\
+&:=\mathcal N(\mathbf x_{t-1};\mathbf \mu_\theta(\mathbf x_t, t), \sigma^2_t\mathbf I)\\
 \end{aligned}
 $$
+
+Authors discuss their choices in $p_\theta(\mathbf x_{t-1}|\mathbf x_t) = \mathcal N(\mathbf x_{t-1};\mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t)$ when $1< t\le T$.  First, they set $\Sigma_\theta(\mathbf x_t, t)=\sigma^2_t\mathbf I$​ to **untrained time-dependent constants**.  Experimentally, both $\sigma^2_t =\beta_t$ and $\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t$ has **similar results**:
+
+- $\sigma^2_t =\beta_t$ is optimal for $\mathbf x_0 \sim \mathcal N(\mathbf 0, \mathbf I)$
+- $\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t$ is optimal for $\mathbf x_0$ deterministically set to one point.
+
+*There are the two extreme choices corresponding to upper and lower bounds on reverse process entropy for data with coordinatewise unit variance*.
 
 **Although we cannot obtain the inverse distribution $q(\mathbf x_{t-1}|\mathbf x_t)$, but if we know $\mathbf x_0$, we can obtain the $q(\mathbf x_{t-1}|\mathbf x_t,\mathbf x_0)$ by the Bayesian formula**.
 
@@ -228,27 +234,96 @@ $$
 We combine Eq(12) and Eq(18), and we can obtain more specific form.
 
 $$
-\tilde\mu_\theta(\mathbf x_t, t)=\tilde\mu_t(\mathbf x_t, \mathbf x_0) = \frac{1}{\sqrt{\alpha_t}}(\mathbf x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\bar\epsilon_t)
+\mu_\theta(\mathbf x_t, t)=\tilde\mu_t(\mathbf x_t, \mathbf x_0) = \frac{1}{\sqrt{\alpha_t}}(\mathbf x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\mathbf{x}_t, t))
 $$
 
-**where $\bar{\epsilon}_t$ is the Gaussian-distributed noise predicted by the deep neural network**, expressed as $\epsilon_\theta(\mathbf{x}_t, t)$. **The reverse (or inference) process of the DDPM is outlined below**.
+**where $\epsilon_\theta(\mathbf{x}_t, t)$ is the Gaussian-distributed noise predicted by the deep neural network**. To sample $\mathbf x_{t-1}\sim p_\theta(\mathbf x_{t-1}|\mathbf x_t)$ is to compute  
+
+$$
+\begin{aligned}
+\mathbf x_{t-1} = \frac{1}{\sqrt{\alpha_t}}(\mathbf x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\mathbf{x}_t, t)) + \sigma_t\mathbf z, \text{ where } \mathbf z \sim \mathcal N(0, \mathbf I) 
+\end{aligned}
+$$
+
+The complete sampling procedure, Algorithm 2, resembles Langevin dynamics with $\epsilon_θ$ as a learned gradient of the data
+density.
+
+![image-20231203122024793](https://qiniu.lianghao.work/image-20231203122024793.png)
+
+**The reverse (or inference) process of the DDPM is outlined below**.
 
 1. First, Gaussian noise $\epsilon_\theta(\mathbf x_t, t)$ is predicted at each timestep using  $\mathbf x_t$ and $t$ , from which we then determine the mean $\mu_\theta(\mathbf x_t, t)$.
 2. Subsequently, the variance $\Sigma_\theta(\mathbf x_t, t)$ is calculated. 
 3. Finally,  $\mathbf x_{t-1}$ is resampled from the posterior distribution  $q(\mathbf x_{t-1}|\mathbf x_t)$
 
-> Authors discuss their choices in $p_\theta(\mathbf x_{t-1}|\mathbf x_t) = \mathcal N(\mathbf x_{t-1};\mu_\theta(\mathbf x_t, t), \Sigma_\theta(\mathbf x_t, t)$ when $1< t\le T$.  First, they set $\Sigma_\theta(\mathbf x_t, t)=\sigma^2_t\mathbf I$ to **untrained time-dependent constants**.  Experimentally, both $\sigma^2_t =\beta_t$ and $\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t$ has **similar results**:
->
-> - $\sigma^2_t =\beta_t$ is optimal for $\mathbf x_0 \sim \mathcal N(\mathbf 0, \mathbf I)$
-> -  $\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t$ is optimal for $\mathbf x_0$ deterministically set to one point.
->
-> *There are the two extreme choices corresponding to upper and lower bounds on reverse process entropy for data with coordinatewise unit variance*.
-
-
-
 #### 3. Loss function
 
+![image-20231202124353163](https://qiniu.lianghao.work/image-20231202124353163.png)
 
+The complete variational lower bound consists of $3$ parts, including $L_T, L_0, L_t$, where $1\le t\le T-1 $. 
+
+1. $L_T=\mathbb E_q[D_{KL}(q(\mathbf x_T|\mathbf x_0)\|p(\mathbf x_T))]$: the forward diffusion process has no learnable parameters, and $\mathbf x_T$ is pure Gaussian noise, and therefore can be ignored.
+
+2. $L_{t-1}=\mathbb E_q[D_{KL}(q(\mathbf x_{t-1}|\mathbf x_t, \mathbf x_0)\| p_\theta(\mathbf x_{t-1}|\mathbf x_t)), \text{ where } 1\le t \le T-1]$: $q(\mathbf x_{t-1}|\mathbf x_t, \mathbf x_0)$ is the posterior distribution of the forward diffusion, and $p_\theta(\mathbf x_{t-1}|\mathbf x_t)$ is the posterior distribution of the reverse process. From the perspective of Variational Inference, $q(\cdot|\cdot)$ is the real posterior, and $p_\theta(\cdot |\cdot)$ is the variational posterior, so it can be obtained by deep network, And the two posterior are assumed to be **Gaussian distributions**, so the solution of KL divergence as follows.
+
+$$
+\begin{aligned}
+L_{t-1} &=\mathbb E_q\left[ D_{KL}(\mathcal N_q(\mathbf x_{t-1}; {\tilde \mu_t}(\mathbf x_t, \mathbf x_0), \tilde \beta_t\mathbf I)\|\mathcal N_p(\mathbf x_{t-1}|\mu_\theta(\mathbf x_t, t), \sigma^2_t\mathbf I))\right]\\
+&=\mathbb E_q\left[\frac{(\tilde \mu_t(\mathbf x_t, \mathbf x_0)-\mu_\theta(\mathbf x_t, t))^2}{2\sigma^2_t}+\frac{1}{2}\left(\frac{\tilde \beta_t}{\sigma^2_t}-1-\ln\frac{\tilde \beta_t}{\sigma_t^2}\right)\right]\\
+&=\mathbb E_q\left[\frac{1}{2\sigma^2_t}\|(\tilde \mu_t(\mathbf x_t, \mathbf x_0)-\mu_\theta(\mathbf x_t, t))\|^2\right]+C(\tilde\beta_t, \sigma^2_t)\\
+&=\mathbb E_q\left[\frac{1}{2\sigma^2_t\alpha_t}\|\mathbf x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\bar\epsilon_t - \mathbf x_t +  \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\mathbf x_t, t)\|^2\right]+C(\tilde\beta_t, \sigma^2_t)\\
+&=\mathbb E_q\left[\frac{\beta_t^2}{2\sigma^2_t\alpha_t(1-\bar\alpha_t)}\|\bar\epsilon_t - \epsilon_\theta(\mathbf x_t, t)\|^2\right]+C(\tilde\beta_t, \sigma^2_t)\\
+&=\mathbb E_{\mathbf x_0,\bar\epsilon_t}\left[\frac{\beta_t^2}{2\sigma^2_t\alpha_t(1-\bar\alpha_t)}\|\bar\epsilon_t - \epsilon_\theta(\sqrt{\bar\alpha_t}\mathbf x_0 + \sqrt{1-\bar \alpha_t}\cdot \epsilon, t)\|^2\right]+C(\tilde\beta_t, \sigma^2_t)\\
+\end{aligned}
+$$
+
+3. $L_0=\mathbb E_q[-\log p_\theta(\mathbf x_0|\mathbf x_1)]$:  The authors of DDPM assume that the image consists of integers in $\{0, 1, \cdots,255\}$ scales linearly to $[-1, 1]$. **This ensures that the neural network reverse process operates on consistently scaled inputs starting from the standard normal prior $p(\mathbf x_T)$**. To obtain **discrete log-likelihoods**, they set this term to an **independent discrete decoder** derived from the Gaussian $\mathbf N(\mathbf x_0;\mu_\theta(\mathbf x_1, 1), \sigma^2_1\mathbf I)$. 
+
+   ![image-20231203132102375](https://qiniu.lianghao.work/image-20231203132102375.png)
+
+   where $D$ is the data dimensionality and the $i$​ superscript indicates extraction of one coordinate. *Similar to the discretized continuous distributions used in VAE decoders and autoregressive models, DDPM's choice here ensures that the variational bound is a lossless codelength of discrete data, without need of adding noise to the data or incorporating the Jacobian of the scaling operation into the log likelihood*. 
+
+In ddpm, authors found it beneficial to sample quality (and simpler to implement) to train the following variant of the variational bound.
+
+$$
+\begin{aligned}
+L_{\text{simple}}(\theta):=\mathbb E_{t, \mathbf x_0,\bar\epsilon_t}\left[\|\bar\epsilon_t - \epsilon_\theta(\sqrt{\bar\alpha_t}\cdot \mathbf x_0 + \sqrt{1-\bar\alpha_t}\cdot \epsilon, t)\|^2\right]
+\end{aligned}
+$$
+
+where $t$ is uniform between 1 and $T$. The $t=1$ case corresponds to $L_0$ with the **integral in the discrete decoder** approximated by the **Gaussian probability density** function times the bin width, **ignoring $\sigma^2_1$ and edge effects**. The $t>1$ case corresponds to an unweighted version of $L_{t-1}$ ($L_T$ does not appear because the forward process variances $\beta_t$ are fixed) .
+
+![image-20231203134530815](https://qiniu.lianghao.work/image-20231203134530815.png)
+
+The simplified objective of $L_{\text{simple}}(\theta)$  discards the weighting in $L_{t-1}$, it is a weighted variational bound that **emphasizes different aspects of reconstruction** compared to the standard variational bound.
+
+**The diffusion setup in DDPM causes the simplified objective to down-weight loss terms corresponding to small $t$**.  These terms train the network to denoise data with very **small amounts of noise**, so it is **beneficial** to down-weight them so that the **network can focus on more difficult denoising tasks at larger $t$ terms**. *This reweighting leads to better sample quality*.
+
+<img src="https://qiniu.lianghao.work/image-20231203140652738.png" alt="image-20231203140652738" style="zoom: 80%;" />
+
+### Experiments
+
+**Setups** They set $T=1000$, and the forward process variances to constants increasing linearly from $\beta_1=10^{-4}$ to $\beta_T=0.02$. These constants were chosen to be small relative to data scaled to $[-1, 1]$, **ensuring that reverse and forward processes have approximately the same function form** while keeping the SNR at $\mathbf x_T$ as small as possible ($L_T=D_{KL}(q(\mathbf x_T|\mathbf x_0)||\mathcal N(0, \mathbf I))\approx 10^{-5}$ bits per dimension in DDPM's experiments).
+
+**Deep Neural Network**: The DDPM uses a **U-Net backbone** similar to an **unmasked PixelCNN++** with **group normalization throughout** the **reverse process**. **Parameters are shared across time**, which is specified to the network using the **Transformer sinusoidal position embedding**. And DDPM uses **self.-attention** at the $16\times 16$ feature map resolution.  
+
+
+
+
+
+![image-20231203140351842](https://qiniu.lianghao.work/image-20231203140351842.png)
+
+
+
+![image-20231203141536363](https://qiniu.lianghao.work/image-20231203141536363.png)
+
+![image-20231203142155071](https://qiniu.lianghao.work/image-20231203142155071.png)
+
+![image-20231203142505515](https://qiniu.lianghao.work/image-20231203142505515.png)
+
+![image-20231203142807239](https://qiniu.lianghao.work/image-20231203142807239.png)
+
+![image-20231203142823495](https://qiniu.lianghao.work/image-20231203142823495.png)
 
 ### Reference
 
