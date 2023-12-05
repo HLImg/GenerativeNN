@@ -14,7 +14,7 @@ class DDPModel(BaseModel):
     def __init__(self, config, accelerator):
         super().__init__(config, accelerator)
         
-        ddpm = config['train']['ddpm']
+        ddpm = config['model']['ddpm']
         
         self.noise_steps = ddpm['noise_steps']
         self.beta_start = ddpm['beta_start']
@@ -80,12 +80,21 @@ class DDPModel(BaseModel):
                     (1 - alpha_t) / torch.sqrt(1 - alpha_bar_t))) + z * sigma_t
         
         return x
-                
-                
-                
-            
-            
-            
     
     def __feed__(self, data):
-        pass
+        self.optimizer.zero_grad()
+        image = data['lq']
+        t = self.sample_timesteps(image.shape[0]).cuda()
+        x_t, epsilon = self.noise_images(image, t)
+        predicted_epsilon = self.net_g(x_t, t)
+        loss = self.criterion(epsilon, predicted_epsilon)
+        self.loss = loss.item()
+
+        # ================================== #
+        self.accelerator.backward(loss)
+        # ================================== #
+        self.optimizer.step()
+        self.scheduler.step()
+    
+    def __eval__(self, data):
+        return {}

@@ -157,11 +157,5 @@ class DDPMUnet(nn.Module):
         x = self.sa_5(self.up_2(x, x2, t))
         x = self.sa_6(self.up_3(x, x1, t))
         
-        return self.outc(x)
-
-
-if __name__ == '__main__':
-    model = Unet(3, 3, True, 256)
-    
-        
+        return self.outc(x)        
         

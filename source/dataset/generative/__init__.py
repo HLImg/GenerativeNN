@@ -4,4 +4,5 @@
 # @FileName:  __init__.py
 # @Contact :  lianghao@whu.edu.cn
 
+from .simple import SimpleDataSet
 from .vae_celeba import CelebaDataSet

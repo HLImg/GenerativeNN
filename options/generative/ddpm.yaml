@@ -16,40 +16,45 @@ global:
 
 dataset:
   task : 'generative'
-  name : 'vae_celeba'
+  name : 'gnn_base'
   param:
     train :
       root : /data/dataset/generative/CelebA/Img/img_align_celeba
-      img_shape : [64, 64]
+      scale_size: 256
+      patch_size: 256
 
 
 loss:
   pixel :
-    name : 'vae'
+    name : 'mse'
     param :
       loss_weight : 1.
       reduction : mean
-      kl_weight : 0.00025
 
 
 net:
   task : 'generative'
   net_g :
-    name : 'unetvae'
+    name : 'baseddpm'
     param:
-      in_dim : 3
-      latent_dim: 128
-      hiddens : [16, 32, 64, 128, 256]
-      img_length : 64
+      in_ch: 3
+      out_ch: 3
+      is_cpu: False
+      embed_time_dim: 256
 
 model :
   task : 'generative'
-  name : 'vae'
+  name : 'ddpm'
+  ddpm: 
+    noise_steps: 1000
+    beta_start: !!float 1e-4
+    beta_end: 0.02
+    img_size: 256
 
 train:
   num_node : 1
   num_worker : 4
-  batch_per_gpu : 64
+  batch_per_gpu : 16
   num_gpu_per_node : 1
   save_freq : 202599
   print_freq : !!float 2e4
@@ -63,7 +68,7 @@ train:
     ckpt: ~
   optim:
     optimizer:
-      name : 'Adam'
+      name : 'AdamW'
       param :
         lr : 0.005
     scheduler:
@@ -71,12 +76,6 @@ train:
       param :
         milestones: [20000000]
         gamma: 1
-  
-  ddpm: 
-    noise_steps: 1000
-    beta_start: !!float 1e-4
-    beta_end: 0.02
-    img_size: 64
     
 
 

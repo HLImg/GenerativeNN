@@ -13,7 +13,8 @@ datasets = {
         'pair_lmdb': PairDataset 
     },
     'generative':{
-        'vae_celeba': CelebaDataSet
+        'vae_celeba': CelebaDataSet,
+        'gnn_base': SimpleDataSet
     }
 }
 
