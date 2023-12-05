@@ -5,4 +5,5 @@
 # @Contact :  lianghao@whu.edu.cn
 
 from .vae_simple import UnetVAE
-from .dcgan import DCGAN
+from .ddpm import DDPMUnet
+

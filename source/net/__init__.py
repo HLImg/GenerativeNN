@@ -13,7 +13,7 @@ nets = {
     },
     'generative':{
         'unetvae': UnetVAE,
-        'dcgan': DCGAN
+        'baseddpm': DDPMUnet
     }
 }
 

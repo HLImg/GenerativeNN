@@ -14,7 +14,8 @@ models = {
         "standard": standardModel,
     },
     'generative':{
-        'vae': VAEModel
+        'vae': VAEModel,
+        'ddpm': DDPModel
     }
 }
 

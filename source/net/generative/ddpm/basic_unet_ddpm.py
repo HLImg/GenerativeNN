@@ -101,9 +101,9 @@ class UpSample(nn.Module):
         embed_time = self.embed_layer(t)[:, :, None, None].repeat(-1, 1, x.shape[-2], x.shape[-1])
         return x + embed_time 
 
-class Unet(nn.Module):
+class DDPMUnet(nn.Module):
     def __init__(self, in_ch, out_ch, is_cpu=True, embed_time_dim=256):
-        super(Unet, self).__init__()
+        super(DDPMUnet, self).__init__()
         
         self.cpu = is_cpu
         self.embed_time_dim = embed_time_dim

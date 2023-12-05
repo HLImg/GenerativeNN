@@ -5,3 +5,4 @@
 # @Contact :  lianghao@whu.edu.cn
 
 from .vae import VAEModel
+from .ddpm import DDPModel
