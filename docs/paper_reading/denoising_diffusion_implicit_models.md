@@ -84,11 +84,13 @@ The parameters $\theta$ are optimized following variational inference objective 
 
 $$
 \begin{aligned}
+\begin{aligned}
 J_\sigma(\epsilon_\theta)&:=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}[\log q_\sigma(x_{1:T}|x_0) - \log p_\theta(x_{0:T})]\\
-&=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[\log \left\{q_\sigma(x_T|x_0)\prod_{t=2}^Tq_\sigma(x_{t-1}|x_t. x_0)\right\} -\log \left\{p_\theta(x_T)\prod_{t=1}^Tp_\theta^{(t)}(x_{t-1}|x_t)\right\}\right]\\
-&=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[\log q_\sigma(x_T|x_0) + \sum_{t=2}^T\log q_\sigma(x_{t-1}|x_t, x_0)-\sum_{i=1}^T\log p_\theta^{(t)}(x_{t-1}|x_t)-\log p_\theta(x_T)\right]\\
+&=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[\log \left(q_\sigma(x_T|x_0)\prod_{t=2}^Tq_\sigma(x_{t-1}|x_t, x_0)\right) -\log \left(p_\theta(x_T)\prod_{t=1}^Tp_\theta^{(t)}(x_{t-1}|x_t)\right)\right]\\
+&=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[\log q_\sigma(x_T|x_0) + \sum_{t=2}^T\log q_\sigma(x_{t-1}|x_t, x_0)-\sum_{t=1}^T\log p_\theta^{(t)}(x_{t-1}|x_t)-\log p_\theta(x_T)\right]\\
 &=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[\sum_{t=2}^T\log \frac{q_\sigma(x_{t-1}|x_t, x_0)}{p_\theta^{(t)}(x_{t-1}|x_t)}+\log \frac{q_\sigma(x_T|x_0)}{p_\theta(x_T)}-\log p_\theta^{(1)}(x_{0}|x_1)\right]\\
-&=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[D_{KL}(q_\sigma(x_T|x_0)\|p_\theta(x_T))+ \sum_{t=2}^T D_{KL}(q_\sigma(x_{t-1}|x_t, x_0)\|p_\theta^{(t)}(x_{t-1}|x_t))-\log p_\theta^{(1)}(x_{0}|x_1)\right]
+&=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}\left[D_{KL}(q_\sigma(x_T|x_0)||p_\theta(x_T))+ \sum_{t=2}^T D_{KL}(q_\sigma(x_{t-1}|x_t, x_0)||p_\theta^{(t)}(x_{t-1}|x_t))-\log p_\theta^{(1)}(x_{0}|x_1)\right]
+\end{aligned}
 \end{aligned}
 $$
 
