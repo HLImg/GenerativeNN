@@ -94,16 +94,6 @@ J_\sigma(\epsilon_\theta)&:=\mathbb E_{x_{0:T}\sim q_\sigma(x_{0:T})}[\log q_\si
 \end{aligned}
 $$
 
-where
-
-$$
-\begin{aligned}
-q_\sigma(x_t|x_0)&=\mathcal N(\sqrt{\alpha_t}\cdot x_0, (1-\alpha_t)I)\\
-p_\theta^{(t)}(x_{t-1}|x_t)&=q_\sigma(x_{t-1}|x_t, f^{(t)}_\theta(x_t))\\
-&=\mathcal N(\sqrt{\alpha_{t-1}}\cdot f^{(t)}_\theta(x_t)+\sqrt{1-\alpha_{t-1}-\sigma^2_t}\cdot \frac{x_t - \sqrt{\alpha_t}\cdot f^{(t)}_\theta(x_t)}{\sqrt{1-\alpha_t}}, \sigma^2_t I)
-\end{aligned}
-$$
-
 From the definition of $J_\sigma$, it would appear that a different model has to be trained for every choice of $\sigma$, **since it corresponds to a different variational objective (and a different generative process)**. However, $J_\sigma$ is equivalent to $L_\gamma$ for certain weights $\gamma$ .
 
 > For all $\sigma > 0$, there exists $\gamma \in \mathbb R^T_{>0}$ and $C \in \mathbb R$, such that $J_\sigma = L_\gamma +C$
@@ -112,7 +102,13 @@ From the definition of $J_\sigma$, it would appear that a different model has to
 >
 > This property of $L_\gamma$ has two implications. On the one hand, this justified the use of $L_1$ as a **surrogate objective function** for the variational lower bound in DDPMs; On the other hand, **since $J_\sigma$ is equivalent to some $L_\gamma$, the optimal solution of $J_\sigma$ is also the same as that $L_1$**. **Therefore, if parameters are not shared across $t$ in the model $\epsilon_\theta$, then the $L_1$ objective can be used as a surrogate objective for the variational objective $J_\sigma$ as well.**
 
-
+$$
+\begin{aligned}
+q_\sigma(x_t|x_0)&=\mathcal N(\sqrt{\alpha_t}\cdot x_0, (1-\alpha_t)I)\\
+p_\theta^{(t)}(x_{t-1}|x_t)&=q_\sigma(x_{t-1}|x_t, f^{(t)}_\theta(x_t))\\
+&=\mathcal N(\sqrt{\alpha_{t-1}}\cdot f^{(t)}_\theta(x_t)+\sqrt{1-\alpha_{t-1}-\sigma^2_t}\cdot \frac{x_t - \sqrt{\alpha_t}\cdot f^{(t)}_\theta(x_t)}{\sqrt{1-\alpha_t}}, \sigma^2_t I)
+\end{aligned}
+$$
 
 ![image-20231206171155411](https://qiniu.lianghao.work/image-20231206171155411.png)
 
