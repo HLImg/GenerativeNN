@@ -104,13 +104,15 @@ From the definition of $J_\sigma$, it would appear that a different model has to
 
 
 where
+
 $$
 \begin{aligned}
-q_\sigma(x_t|x_0)&=\mathcal N(\sqrt{\alpha_t}\cdot x_0, (1-\alpha_t)I)\\
-p_\theta^{(t)}(x_{t-1}|x_t)&=q_\sigma(x_{t-1}|x_t, f^{(t)}_\theta(x_t))\\
-&=\mathcal N(\sqrt{\alpha_{t-1}}\cdot f^{(t)}_\theta(x_t)+\sqrt{1-\alpha_{t-1}-\sigma^2_t}\cdot \frac{x_t - \sqrt{\alpha_t}\cdot f^{(t)}_\theta(x_t)}{\sqrt{1-\alpha_t}}, \sigma^2_t I)
+q_\sigma(x_t|x_0)&=\mathcal{N}(\sqrt{\alpha_t}\cdot x_0, (1-\alpha_t)I) \\
+p_\theta^{(t)}(x_{t-1}|x_t)&=q_\sigma(x_{t-1}|x_t, f_\theta^{(t)}(x_t)) \\
+&=\mathcal{N}\left(\sqrt{\alpha_{t-1}}\cdot f_\theta^{(t)}(x_t)+\sqrt{1-\alpha_{t-1}-\sigma^2_t}\cdot \frac{x_t - \sqrt{\alpha_t}\cdot f_\theta^{(t)}(x_t)}{\sqrt{1-\alpha_t}}, \sigma^2_t I\right)
 \end{aligned}
 $$
+
 
 
 ![image-20231206171155411](https://qiniu.lianghao.work/image-20231206171155411.png)
